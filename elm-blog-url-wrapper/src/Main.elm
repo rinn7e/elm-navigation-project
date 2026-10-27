@@ -249,7 +249,7 @@ urlCmd : Msg -> Model -> Model -> Cmd Msg
 urlCmd msg model newModel =
     case ( msg, destinationOf newModel ) of
         ( _, Nothing ) ->
-            -- The not found page keeps the URL it was opened with
+            -- The not found page writes no URL: no link of the app leads to it
             Cmd.none
 
         ( UrlChanged url, Just route ) ->

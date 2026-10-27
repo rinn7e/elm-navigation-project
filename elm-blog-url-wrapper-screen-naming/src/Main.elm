@@ -249,7 +249,7 @@ urlCmd : Msg -> Model -> Model -> Cmd Msg
 urlCmd msg model newModel =
     case ( msg, destinationOf newModel ) of
         ( _, Nothing ) ->
-            -- The not found screen keeps the URL it was opened with
+            -- The not found screen writes no URL: no link of the app leads to it
             Cmd.none
 
         ( UrlChanged url, Just destination ) ->
@@ -312,7 +312,7 @@ viewScreen : Model -> { title : String, content : Html Msg }
 viewScreen model =
     case model.screen of
         NotFound ->
-            { title = "Not found", content = text "There is no screen here." }
+            { title = "Not found", content = text "There is no page here." }
 
         Home ->
             Home.view model.posts

@@ -36,4 +36,4 @@ npm install
 npm run dev
 ```
 
-Other scripts: `npm run build`, `npm run preview`, `npm run format`.
+Other scripts: `npm run build`, `npm run preview`, `npm run format`, `npm run format:check`.
