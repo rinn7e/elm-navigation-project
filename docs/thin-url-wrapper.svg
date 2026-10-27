@@ -1,69 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="540" viewBox="0 0 1000 540" font-family="-apple-system, Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="730" viewBox="0 0 1000 730" font-family="-apple-system, Helvetica, Arial, sans-serif">
   <defs>
-    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
-    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/></marker>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker>
   </defs>
-  <rect width="1000" height="540" fill="#ffffff"/>
-  <text x="40" y="48" font-size="24" font-weight="700" fill="#0f172a">The thin URL wrapper: the URL follows the model</text>
-  <text x="40" y="76" font-size="15" fill="#475569">update never touches the URL; one wrapper writes it after every step</text>
+  <rect width="1000" height="730" fill="#ffffff"/>
+  <text x="40" y="58" font-size="34" font-weight="700" fill="#0f172a">The thin URL wrapper</text>
+  <text x="40" y="96" font-size="22" fill="#475569">The model owns where the app is, the URL just follows</text>
 
-  <!-- inputs -->
-  <g font-size="15" fill="#0f172a">
-    <rect x="40" y="120" width="170" height="54" rx="10" fill="#f1f5f9" stroke="#94a3b8"/>
-    <text x="125" y="152" text-anchor="middle">Click on a link</text>
-    <rect x="40" y="194" width="170" height="54" rx="10" fill="#f1f5f9" stroke="#94a3b8"/>
-    <text x="125" y="226" text-anchor="middle">Login, logout, publish</text>
-    <rect x="40" y="268" width="170" height="54" rx="10" fill="#fff7ed" stroke="#ea580c"/>
-    <text x="125" y="292" text-anchor="middle" fill="#9a3412">Back / forward</text>
-    <text x="125" y="311" text-anchor="middle" font-size="13" fill="#9a3412">(UrlChanged)</text>
-    <rect x="40" y="342" width="170" height="54" rx="10" fill="#fff7ed" stroke="#ea580c"/>
-    <text x="125" y="366" text-anchor="middle" fill="#9a3412">Boot</text>
-    <text x="125" y="385" text-anchor="middle" font-size="13" fill="#9a3412">(URL read once)</text>
+  <g font-size="21" text-anchor="middle">
+    <rect x="40" y="140" width="210" height="70" rx="12" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>
+    <text x="145" y="182" fill="#0f172a">Click a link</text>
+    <rect x="40" y="228" width="210" height="70" rx="12" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>
+    <text x="145" y="270" fill="#0f172a">Login, logout</text>
+    <rect x="40" y="316" width="210" height="70" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+    <text x="145" y="358" fill="#9a3412">Back / forward</text>
+    <rect x="40" y="404" width="210" height="70" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+    <text x="145" y="446" fill="#9a3412">Boot</text>
   </g>
 
-  <!-- update box -->
-  <rect x="270" y="110" width="440" height="296" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="6 5"/>
-  <text x="290" y="136" font-size="14" font-weight="600" fill="#64748b">update (no URL in here)</text>
+  <rect x="290" y="128" width="490" height="358" rx="16" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="312" y="162" font-size="20" font-weight="600" fill="#475569">update: no URL in here</text>
 
-  <g font-size="15" fill="#0f172a">
-    <rect x="300" y="200" width="170" height="80" rx="10" fill="#ffffff" stroke="#475569"/>
-    <text x="385" y="232" text-anchor="middle" font-weight="600" font-family="Menlo, monospace" font-size="14">navigate</text>
-    <text x="385" y="254" text-anchor="middle" font-size="13" fill="#475569">guard, then drop</text>
-    <text x="385" y="270" text-anchor="middle" font-size="13" fill="#475569">the same destination</text>
+  <g text-anchor="middle">
+    <rect x="315" y="240" width="200" height="120" rx="12" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+    <text x="415" y="282" font-family="Menlo, monospace" font-size="21" font-weight="700" fill="#0f172a">navigate</text>
+    <text x="415" y="314" font-size="18" fill="#475569">guard, then drop</text>
+    <text x="415" y="340" font-size="18" fill="#475569">same destination</text>
 
-    <rect x="520" y="180" width="170" height="120" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-    <text x="605" y="226" text-anchor="middle" font-size="18" font-weight="700" fill="#1e3a8a">Model</text>
-    <text x="605" y="250" text-anchor="middle" font-size="13" fill="#1e3a8a">the page shown</text>
-    <text x="605" y="268" text-anchor="middle" font-size="13" fill="#1e3a8a">(source of truth)</text>
+    <rect x="565" y="220" width="190" height="160" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="3"/>
+    <text x="660" y="285" font-size="30" font-weight="700" fill="#1e3a8a">Model</text>
+    <text x="660" y="318" font-size="19" fill="#1e3a8a">source of truth</text>
   </g>
 
-  <!-- wrapper -->
-  <rect x="270" y="430" width="440" height="86" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-  <text x="490" y="458" text-anchor="middle" font-size="15" font-weight="700" fill="#065f46" font-family="Menlo, monospace">updateWithUrl</text>
-  <text x="490" y="480" text-anchor="middle" font-size="13" fill="#065f46">reads destinationOf model after the step:</text>
-  <text x="490" y="500" text-anchor="middle" font-size="13" fill="#065f46">new = push, same = nothing, guard redirected = replace</text>
+  <rect x="820" y="265" width="140" height="70" rx="12" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>
+  <text x="890" y="307" text-anchor="middle" font-size="21" fill="#0f172a">view</text>
 
-  <!-- URL -->
-  <rect x="770" y="300" width="190" height="216" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
-  <text x="865" y="380" text-anchor="middle" font-size="19" font-weight="700" fill="#9a3412">URL</text>
-  <text x="865" y="404" text-anchor="middle" font-size="14" fill="#9a3412">just follows</text>
+  <rect x="290" y="530" width="490" height="140" rx="16" fill="#ecfdf5" stroke="#059669" stroke-width="3"/>
+  <text x="535" y="564" text-anchor="middle" font-family="Menlo, monospace" font-size="22" font-weight="700" fill="#065f46">updateWithUrl</text>
+  <text x="535" y="596" text-anchor="middle" font-size="19" fill="#065f46">new destination: push</text>
+  <text x="535" y="622" text-anchor="middle" font-size="19" fill="#065f46">same destination: nothing</text>
+  <text x="535" y="648" text-anchor="middle" font-size="19" fill="#065f46">guard redirected: replace</text>
 
-  <!-- view -->
-  <rect x="770" y="180" width="190" height="64" rx="10" fill="#f1f5f9" stroke="#94a3b8"/>
-  <text x="865" y="217" text-anchor="middle" font-size="15" fill="#0f172a">view</text>
+  <rect x="820" y="530" width="140" height="140" rx="14" fill="#fff7ed" stroke="#ea580c" stroke-width="3"/>
+  <text x="890" y="611" text-anchor="middle" font-size="30" font-weight="700" fill="#9a3412">URL</text>
 
-  <g stroke="#475569" stroke-width="2" fill="none">
-    <path d="M210 147 C255 147 255 214 296 216" marker-end="url(#a)"/>
-    <path d="M210 221 C250 221 260 232 296 232" marker-end="url(#a)"/>
-    <path d="M210 295 C250 295 260 250 296 248" marker-end="url(#a)"/>
-    <path d="M210 369 C255 369 255 266 296 264" marker-end="url(#a)"/>
-    <path d="M470 240 H516" marker-end="url(#a)"/>
-    <path d="M690 212 H766" marker-end="url(#a)"/>
-    <path d="M605 300 V426" marker-end="url(#a)"/>
-    <path d="M710 473 H766" marker-end="url(#a)"/>
+  <g stroke="#334155" stroke-width="3" fill="none">
+    <path d="M250 175 C285 175 280 268 309 270" marker-end="url(#a)"/>
+    <path d="M250 263 C280 263 285 290 309 290" marker-end="url(#a)"/>
+    <path d="M250 351 C280 351 285 312 309 310" marker-end="url(#a)"/>
+    <path d="M250 439 C285 439 280 332 309 330" marker-end="url(#a)"/>
+    <path d="M515 300 H559" marker-end="url(#a)"/>
+    <path d="M755 300 H814" marker-end="url(#a)"/>
+    <path d="M660 380 V524" marker-end="url(#a)"/>
+    <path d="M780 600 H814" marker-end="url(#a)"/>
   </g>
-  <text x="615" y="370" font-size="13" fill="#475569">after every step</text>
-  <text x="865" y="440" text-anchor="middle" font-size="12" fill="#64748b">Elm echo (UrlChanged)</text>
-  <text x="865" y="458" text-anchor="middle" font-size="12" fill="#64748b">is the destination shown:</text>
-  <text x="865" y="476" text-anchor="middle" font-size="12" fill="#64748b">dropped</text>
+  <text x="672" y="455" font-size="19" fill="#334155">after every step</text>
+  <text x="40" y="712" font-size="19" fill="#64748b">Elm echoes every URL write as UrlChanged: it is the destination shown, so it is dropped</text>
 </svg>
