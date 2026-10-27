@@ -7,6 +7,22 @@ model, `onUrlRequest` / `onUrlChange`, and `Nav.pushUrl` / `Nav.replaceUrl`
 called from `update`. The URL is the source of truth: every move goes through
 the URL and comes back as `UrlChanged`.
 
+## Opaque types
+
+Two opaque types make the wrong writes impossible to compile:
+
+- `Guard.Guarded` (in `src/Guard.elm`): a destination that went through the
+  guard. Only `Guard.guard` makes one.
+- `CurrentPage.CurrentPage` (in `src/CurrentPage.elm`): the page shown, held in
+  the model. Only `CurrentPage.open`, which takes a `Guarded`, opens one; the
+  only other change is to the form of the page shown (`setLogin`,
+  `setNewPost`).
+
+Both modules expose the type without its constructor, with a reader
+(`Guard.route`, `CurrentPage.page`). `npm run check:opaque` compiles the modules
+in `compile-fail/`: `Allowed.elm` compiles, and the ones that skip the guard,
+write a page into the model directly, or build either type by hand do not.
+
 ## Pages
 
 - `/`: the list of posts
@@ -36,4 +52,4 @@ npm install
 npm run dev
 ```
 
-Other scripts: `npm run build`, `npm run preview`, `npm run format`, `npm run format:check`.
+Other scripts: `npm run build`, `npm run preview`, `npm run format`, `npm run format:check`, `npm run check:opaque`.

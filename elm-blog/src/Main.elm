@@ -3,6 +3,8 @@ port module Main exposing (main)
 import BlogPost exposing (BlogPost)
 import Browser
 import Browser.Navigation as Nav
+import CurrentPage exposing (CurrentPage, Page(..))
+import Guard
 import Html exposing (Html, a, button, div, header, main_, nav, span, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
@@ -44,17 +46,8 @@ type alias Model =
     { key : Nav.Key
     , user : Maybe String
     , posts : List BlogPost
-    , page : Page
+    , page : CurrentPage
     }
-
-
-type Page
-    = NotFound
-    | Home
-    | Post String
-    | About
-    | Login Login.Model
-    | NewPost NewPost.Model
 
 
 init : Maybe String -> Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -63,7 +56,7 @@ init user url key =
         { key = key
         , user = user
         , posts = BlogPost.all
-        , page = NotFound
+        , page = CurrentPage.open (Guard.guard user Nothing)
         }
 
 
@@ -81,7 +74,7 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case ( msg, model.page ) of
+    case ( msg, CurrentPage.page model.page ) of
         ( LinkClicked urlRequest, _ ) ->
             case urlRequest of
                 Browser.Internal url ->
@@ -106,7 +99,7 @@ update msg model =
                     )
 
                 ( newLogin, Nothing ) ->
-                    ( { model | page = Login newLogin }, Cmd.none )
+                    ( { model | page = CurrentPage.setLogin newLogin model.page }, Cmd.none )
 
         ( GotNewPostMsg subMsg, NewPost newPost ) ->
             case NewPost.update model.posts subMsg newPost of
@@ -116,44 +109,32 @@ update msg model =
                     )
 
                 ( newNewPost, Nothing ) ->
-                    ( { model | page = NewPost newNewPost }, Cmd.none )
+                    ( { model | page = CurrentPage.setNewPost newNewPost model.page }, Cmd.none )
 
         ( _, _ ) ->
             -- A message for a page that is not shown anymore
             ( model, Cmd.none )
 
 
-{-| Opens the page of the route, the guard first: signed out the new post page
-redirects to the login page, signed in the login page redirects home.
+{-| Opens the page of the route, through the guard. When the guard redirects,
+the URL is replaced, and the page opens when it comes back as `UrlChanged`.
 -}
 changeRouteTo : Maybe Route -> Model -> ( Model, Cmd Msg )
 changeRouteTo maybeRoute model =
-    case maybeRoute of
+    let
+        guarded =
+            Guard.guard model.user maybeRoute
+    in
+    case Guard.route guarded of
+        Just route ->
+            if Just route /= maybeRoute then
+                ( model, Route.replaceUrl model.key route )
+
+            else
+                ( { model | page = CurrentPage.open guarded }, Cmd.none )
+
         Nothing ->
-            ( { model | page = NotFound }, Cmd.none )
-
-        Just Route.Home ->
-            ( { model | page = Home }, Cmd.none )
-
-        Just (Route.Post slug) ->
-            ( { model | page = Post slug }, Cmd.none )
-
-        Just Route.About ->
-            ( { model | page = About }, Cmd.none )
-
-        Just Route.Login ->
-            if model.user /= Nothing then
-                ( model, Route.replaceUrl model.key Route.Home )
-
-            else
-                ( { model | page = Login Login.init }, Cmd.none )
-
-        Just Route.NewPost ->
-            if model.user == Nothing then
-                ( model, Route.replaceUrl model.key Route.Login )
-
-            else
-                ( { model | page = NewPost NewPost.init }, Cmd.none )
+            ( { model | page = CurrentPage.open guarded }, Cmd.none )
 
 
 
@@ -178,7 +159,7 @@ view model =
 
 viewPage : Model -> { title : String, content : Html Msg }
 viewPage model =
-    case model.page of
+    case CurrentPage.page model.page of
         NotFound ->
             { title = "Not found", content = text "There is no page here." }
 
@@ -228,7 +209,7 @@ viewNavLink : Model -> Route -> String -> Html msg
 viewNavLink model route label =
     a
         [ class
-            (if isActive model.page route then
+            (if isActive (CurrentPage.page model.page) route then
                 "font-semibold text-sky-700"
 
              else
