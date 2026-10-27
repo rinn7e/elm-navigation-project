@@ -1,6 +1,7 @@
 // Compiles each module of this folder against the app: Allowed.elm must
-// compile, every other module must fail with the error its doc comment
-// describes, which shows that the opaque types stop the write.
+// compile, and every other module must fail with the kind of error listed
+// below (its doc comment says why), which shows that the opaque types stop
+// the write.
 import { spawnSync } from 'node:child_process'
 import { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
