@@ -3,7 +3,9 @@ port module Main exposing (main)
 import BlogPost exposing (BlogPost)
 import Browser
 import Browser.Navigation as Nav
+import CurrentScreen exposing (CurrentScreen, Screen(..))
 import Destination exposing (Destination)
+import Guard
 import Html exposing (Html, a, button, div, header, main_, nav, span, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
@@ -44,17 +46,8 @@ type alias Model =
     { key : Nav.Key
     , user : Maybe String
     , posts : List BlogPost
-    , screen : Screen
+    , screen : CurrentScreen
     }
-
-
-type Screen
-    = NotFound
-    | Home
-    | Post String
-    | About
-    | Login Login.Model
-    | NewPost NewPost.Model
 
 
 init : Maybe String -> Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -63,15 +56,12 @@ init user url key =
         urlDestination =
             Destination.fromUrl url
 
-        bootModel =
+        model =
             { key = key
             , user = user
             , posts = BlogPost.all
-            , screen = NotFound
+            , screen = CurrentScreen.open (Guard.guard user urlDestination)
             }
-
-        model =
-            openScreen (guard bootModel urlDestination) bootModel
     in
     ( model, bootUrlCmd urlDestination model )
 
@@ -90,7 +80,7 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case ( msg, model.screen ) of
+    case ( msg, CurrentScreen.screen model.screen ) of
         ( LinkClicked urlRequest, _ ) ->
             case urlRequest of
                 Browser.Internal url ->
@@ -115,7 +105,7 @@ update msg model =
                     )
 
                 ( newLogin, Nothing ) ->
-                    ( { model | screen = Login newLogin }, Cmd.none )
+                    ( { model | screen = CurrentScreen.setLogin newLogin model.screen }, Cmd.none )
 
         ( GotNewPostMsg subMsg, NewPost newPost ) ->
             case NewPost.update model.posts subMsg newPost of
@@ -125,7 +115,7 @@ update msg model =
                     )
 
                 ( newNewPost, Nothing ) ->
-                    ( { model | screen = NewPost newNewPost }, Cmd.none )
+                    ( { model | screen = CurrentScreen.setNewPost newNewPost model.screen }, Cmd.none )
 
         ( _, _ ) ->
             -- A message for a screen that is not shown anymore
@@ -143,66 +133,20 @@ navigate : Maybe Destination -> Model -> Model
 navigate maybeDestination model =
     let
         destination =
-            guard model maybeDestination
+            Guard.guard model.user maybeDestination
     in
-    if destination == destinationOf model then
+    if Guard.destination destination == destinationOf model then
         model
 
     else
-        openScreen destination model
-
-
-{-| Signed out the new post screen redirects to the login screen, signed in the
-login screen redirects home.
--}
-guard : Model -> Maybe Destination -> Maybe Destination
-guard model maybeDestination =
-    case maybeDestination of
-        Just Destination.Login ->
-            if model.user /= Nothing then
-                Just Destination.Home
-
-            else
-                maybeDestination
-
-        Just Destination.NewPost ->
-            if model.user == Nothing then
-                Just Destination.Login
-
-            else
-                maybeDestination
-
-        _ ->
-            maybeDestination
-
-
-openScreen : Maybe Destination -> Model -> Model
-openScreen maybeDestination model =
-    case maybeDestination of
-        Nothing ->
-            { model | screen = NotFound }
-
-        Just Destination.Home ->
-            { model | screen = Home }
-
-        Just (Destination.Post slug) ->
-            { model | screen = Post slug }
-
-        Just Destination.About ->
-            { model | screen = About }
-
-        Just Destination.Login ->
-            { model | screen = Login Login.init }
-
-        Just Destination.NewPost ->
-            { model | screen = NewPost NewPost.init }
+        { model | screen = CurrentScreen.open destination }
 
 
 {-| Where the app is, read from the screen shown (it is not stored a second time).
 -}
 destinationOf : Model -> Maybe Destination
 destinationOf model =
-    case model.screen of
+    case CurrentScreen.screen model.screen of
         NotFound ->
             Nothing
 
@@ -263,7 +207,7 @@ urlCmd msg model newModel =
             if destinationOf model == Just destination then
                 Cmd.none
 
-            else if guard newModel (destinationOf model) /= destinationOf model then
+            else if Guard.destination (Guard.guard newModel.user (destinationOf model)) /= destinationOf model then
                 -- The guard would redirect the destination before
                 Destination.replaceUrl newModel.key destination
 
@@ -310,7 +254,7 @@ view model =
 
 viewScreen : Model -> { title : String, content : Html Msg }
 viewScreen model =
-    case model.screen of
+    case CurrentScreen.screen model.screen of
         NotFound ->
             { title = "Not found", content = text "There is no page here." }
 
@@ -360,7 +304,7 @@ viewNavLink : Model -> Destination -> String -> Html msg
 viewNavLink model destination label =
     a
         [ class
-            (if isActive model.screen destination then
+            (if isActive (CurrentScreen.screen model.screen) destination then
                 "font-semibold text-sky-700"
 
              else
