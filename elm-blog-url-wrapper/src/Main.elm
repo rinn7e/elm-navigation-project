@@ -3,6 +3,8 @@ port module Main exposing (main)
 import BlogPost exposing (BlogPost)
 import Browser
 import Browser.Navigation as Nav
+import CurrentPage exposing (CurrentPage, Page(..))
+import Guard
 import Html exposing (Html, a, button, div, header, main_, nav, span, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
@@ -44,17 +46,8 @@ type alias Model =
     { key : Nav.Key
     , user : Maybe String
     , posts : List BlogPost
-    , page : Page
+    , page : CurrentPage
     }
-
-
-type Page
-    = NotFound
-    | Home
-    | Post String
-    | About
-    | Login Login.Model
-    | NewPost NewPost.Model
 
 
 init : Maybe String -> Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -63,15 +56,12 @@ init user url key =
         urlDestination =
             Route.fromUrl url
 
-        bootModel =
+        model =
             { key = key
             , user = user
             , posts = BlogPost.all
-            , page = NotFound
+            , page = CurrentPage.open (Guard.guard user urlDestination)
             }
-
-        model =
-            openPage (guard bootModel urlDestination) bootModel
     in
     ( model, bootUrlCmd urlDestination model )
 
@@ -90,7 +80,7 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case ( msg, model.page ) of
+    case ( msg, CurrentPage.page model.page ) of
         ( LinkClicked urlRequest, _ ) ->
             case urlRequest of
                 Browser.Internal url ->
@@ -115,7 +105,7 @@ update msg model =
                     )
 
                 ( newLogin, Nothing ) ->
-                    ( { model | page = Login newLogin }, Cmd.none )
+                    ( { model | page = CurrentPage.setLogin newLogin model.page }, Cmd.none )
 
         ( GotNewPostMsg subMsg, NewPost newPost ) ->
             case NewPost.update model.posts subMsg newPost of
@@ -125,7 +115,7 @@ update msg model =
                     )
 
                 ( newNewPost, Nothing ) ->
-                    ( { model | page = NewPost newNewPost }, Cmd.none )
+                    ( { model | page = CurrentPage.setNewPost newNewPost model.page }, Cmd.none )
 
         ( _, _ ) ->
             -- A message for a page that is not shown anymore
@@ -143,66 +133,20 @@ navigate : Maybe Route -> Model -> Model
 navigate maybeRoute model =
     let
         destination =
-            guard model maybeRoute
+            Guard.guard model.user maybeRoute
     in
-    if destination == destinationOf model then
+    if Guard.route destination == destinationOf model then
         model
 
     else
-        openPage destination model
-
-
-{-| Signed out the new post page redirects to the login page, signed in the
-login page redirects home.
--}
-guard : Model -> Maybe Route -> Maybe Route
-guard model maybeRoute =
-    case maybeRoute of
-        Just Route.Login ->
-            if model.user /= Nothing then
-                Just Route.Home
-
-            else
-                maybeRoute
-
-        Just Route.NewPost ->
-            if model.user == Nothing then
-                Just Route.Login
-
-            else
-                maybeRoute
-
-        _ ->
-            maybeRoute
-
-
-openPage : Maybe Route -> Model -> Model
-openPage maybeRoute model =
-    case maybeRoute of
-        Nothing ->
-            { model | page = NotFound }
-
-        Just Route.Home ->
-            { model | page = Home }
-
-        Just (Route.Post slug) ->
-            { model | page = Post slug }
-
-        Just Route.About ->
-            { model | page = About }
-
-        Just Route.Login ->
-            { model | page = Login Login.init }
-
-        Just Route.NewPost ->
-            { model | page = NewPost NewPost.init }
+        { model | page = CurrentPage.open destination }
 
 
 {-| Where the app is, read from the page shown (it is not stored a second time).
 -}
 destinationOf : Model -> Maybe Route
 destinationOf model =
-    case model.page of
+    case CurrentPage.page model.page of
         NotFound ->
             Nothing
 
@@ -263,7 +207,7 @@ urlCmd msg model newModel =
             if destinationOf model == Just route then
                 Cmd.none
 
-            else if guard newModel (destinationOf model) /= destinationOf model then
+            else if Guard.route (Guard.guard newModel.user (destinationOf model)) /= destinationOf model then
                 -- The guard would redirect the destination before
                 Route.replaceUrl newModel.key route
 
@@ -310,7 +254,7 @@ view model =
 
 viewPage : Model -> { title : String, content : Html Msg }
 viewPage model =
-    case model.page of
+    case CurrentPage.page model.page of
         NotFound ->
             { title = "Not found", content = text "There is no page here." }
 
@@ -360,7 +304,7 @@ viewNavLink : Model -> Route -> String -> Html msg
 viewNavLink model route label =
     a
         [ class
-            (if isActive model.page route then
+            (if isActive (CurrentPage.page model.page) route then
                 "font-semibold text-sky-700"
 
              else

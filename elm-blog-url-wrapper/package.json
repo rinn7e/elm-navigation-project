@@ -7,7 +7,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "format": "elm-format src --yes",
-    "format:check": "elm-format src --validate"
+    "format:check": "elm-format src --validate",
+    "check:opaque": "node compile-fail/check.js"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
