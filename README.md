@@ -27,5 +27,5 @@ To compare the versions:
 
 ```bash
 git diff --no-index elm-blog/src elm-blog-url-wrapper/src
-git diff --no-index elm-blog-url-wrapper/src elm-blog-url-wrapper-screen-naming/src
+git diff --no-index -M elm-blog-url-wrapper/src elm-blog-url-wrapper-screen-naming/src
 ```

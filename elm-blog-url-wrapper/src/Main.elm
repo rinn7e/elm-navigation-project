@@ -118,7 +118,7 @@ update msg model =
                     ( { model | page = Login newLogin }, Cmd.none )
 
         ( GotNewPostMsg subMsg, NewPost newPost ) ->
-            case NewPost.update subMsg newPost of
+            case NewPost.update model.posts subMsg newPost of
                 ( _, Just post ) ->
                     ( navigate (Just (Route.Post post.slug)) { model | posts = post :: model.posts }
                     , Cmd.none
@@ -239,10 +239,11 @@ updateWithUrl msg model =
 
 
 {-| A change of destination pushes an entry, the same destination writes
-nothing. A back or forward of the browser (`UrlChanged`) has its entry already:
-it is corrected with a replace only when the app shows another destination (the
-guard redirected it). Elm also sends `UrlChanged` for the URL written here: it
-is the destination shown, so it writes nothing.
+nothing. An entry the guard would now redirect (the login page after a login) is
+replaced instead. A back or forward of the browser (`UrlChanged`) has its entry
+already: it is corrected with a replace only when the app shows another
+destination (the guard redirected it). Elm also sends `UrlChanged` for the URL
+written here: it is the destination shown, so it writes nothing.
 -}
 urlCmd : Msg -> Model -> Model -> Cmd Msg
 urlCmd msg model newModel =
@@ -261,6 +262,10 @@ urlCmd msg model newModel =
         ( _, Just route ) ->
             if destinationOf model == Just route then
                 Cmd.none
+
+            else if guard newModel (destinationOf model) /= destinationOf model then
+                -- The guard would redirect the destination before
+                Route.replaceUrl newModel.key route
 
             else
                 Route.pushUrl newModel.key route

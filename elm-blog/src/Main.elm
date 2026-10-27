@@ -109,7 +109,7 @@ update msg model =
                     ( { model | page = Login newLogin }, Cmd.none )
 
         ( GotNewPostMsg subMsg, NewPost newPost ) ->
-            case NewPost.update subMsg newPost of
+            case NewPost.update model.posts subMsg newPost of
                 ( _, Just post ) ->
                     ( { model | posts = post :: model.posts }
                     , Route.pushUrl model.key (Route.Post post.slug)
@@ -143,29 +143,17 @@ changeRouteTo maybeRoute model =
 
         Just Route.Login ->
             if model.user /= Nothing then
-                redirectTo Route.Home model
+                ( model, Route.replaceUrl model.key Route.Home )
 
             else
                 ( { model | page = Login Login.init }, Cmd.none )
 
         Just Route.NewPost ->
             if model.user == Nothing then
-                redirectTo Route.Login model
+                ( model, Route.replaceUrl model.key Route.Login )
 
             else
                 ( { model | page = NewPost NewPost.init }, Cmd.none )
-
-
-{-| Opens the page of the route and replaces the URL with it. The page is opened
-here too: the `UrlChanged` of a `replaceUrl` run from `init` never arrives.
--}
-redirectTo : Route -> Model -> ( Model, Cmd Msg )
-redirectTo route model =
-    let
-        ( newModel, cmd ) =
-            changeRouteTo (Just route) model
-    in
-    ( newModel, Cmd.batch [ cmd, Route.replaceUrl model.key route ] )
 
 
 

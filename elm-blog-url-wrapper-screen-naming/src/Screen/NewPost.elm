@@ -32,10 +32,11 @@ type Msg
     | SubmittedForm
 
 
-{-| The second value is the post once the form publishes it.
+{-| The second value is the post once the form publishes it. A title must give
+a slug that no post has yet.
 -}
-update : Msg -> Model -> ( Model, Maybe BlogPost )
-update msg model =
+update : List BlogPost -> Msg -> Model -> ( Model, Maybe BlogPost )
+update posts msg model =
     case msg of
         EnteredTitle title ->
             ( { model | title = title }, Nothing )
@@ -45,7 +46,10 @@ update msg model =
 
         SubmittedForm ->
             if String.isEmpty (BlogPost.slugify model.title) then
-                ( { model | error = Just "The post needs a title." }, Nothing )
+                ( { model | error = Just "The title needs at least one letter or digit (a-z, 0-9)." }, Nothing )
+
+            else if BlogPost.find (BlogPost.slugify model.title) posts /= Nothing then
+                ( { model | error = Just "A post with this title exists already." }, Nothing )
 
             else
                 ( model
