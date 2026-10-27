@@ -13,6 +13,12 @@ new post page for signed-in users), to compare two ways of handling navigation.
 3. `elm-blog-url-wrapper-screen-naming/`: the same as `elm-blog-url-wrapper/`
    with names changed only (`Page` is `Screen`, `Route` is `Destination`).
 
+![The usual way: every move goes through the URL](docs/usual-way.png)
+
+![The thin URL wrapper: the URL follows the model](docs/thin-url-wrapper.png)
+
+The diagrams are drawn in `docs/*.svg` and exported to PNG.
+
 Each app runs on its own:
 
 ```bash

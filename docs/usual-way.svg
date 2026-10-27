@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="470" viewBox="0 0 1000 470" font-family="-apple-system, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+    <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+  </defs>
+  <rect width="1000" height="470" fill="#ffffff"/>
+  <text x="40" y="48" font-size="24" font-weight="700" fill="#0f172a">The usual way: every move goes through the URL</text>
+  <text x="40" y="76" font-size="15" fill="#475569">update writes the URL, and the app only moves when the URL comes back as UrlChanged</text>
+
+  <!-- top row: going out -->
+  <g font-size="15" fill="#0f172a">
+    <rect x="40" y="120" width="170" height="64" rx="10" fill="#f1f5f9" stroke="#94a3b8"/>
+    <text x="125" y="157" text-anchor="middle">Click on a link</text>
+
+    <rect x="260" y="120" width="190" height="64" rx="10" fill="#f1f5f9" stroke="#94a3b8"/>
+    <text x="355" y="148" text-anchor="middle" font-weight="600">update</text>
+    <text x="355" y="168" text-anchor="middle" font-family="Menlo, monospace" font-size="13">LinkClicked</text>
+
+    <rect x="500" y="120" width="190" height="64" rx="10" fill="#f1f5f9" stroke="#94a3b8"/>
+    <text x="595" y="148" text-anchor="middle" font-weight="600">update writes</text>
+    <text x="595" y="168" text-anchor="middle" font-family="Menlo, monospace" font-size="13">Nav.pushUrl</text>
+  </g>
+
+  <!-- URL -->
+  <rect x="760" y="120" width="200" height="250" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+  <text x="860" y="235" text-anchor="middle" font-size="19" font-weight="700" fill="#9a3412">URL</text>
+  <text x="860" y="260" text-anchor="middle" font-size="14" fill="#9a3412">source of truth</text>
+
+  <!-- bottom row: coming back -->
+  <g font-size="15" fill="#0f172a">
+    <rect x="500" y="306" width="190" height="64" rx="10" fill="#fef2f2" stroke="#dc2626"/>
+    <text x="595" y="334" text-anchor="middle" font-weight="600" fill="#991b1b">the echo</text>
+    <text x="595" y="354" text-anchor="middle" font-family="Menlo, monospace" font-size="13" fill="#991b1b">UrlChanged</text>
+
+    <rect x="260" y="306" width="190" height="64" rx="10" fill="#f1f5f9" stroke="#94a3b8"/>
+    <text x="355" y="334" text-anchor="middle" font-weight="600">update again</text>
+    <text x="355" y="354" text-anchor="middle" font-family="Menlo, monospace" font-size="13">changeRouteTo + guard</text>
+
+    <rect x="40" y="306" width="170" height="64" rx="10" fill="#eff6ff" stroke="#2563eb"/>
+    <text x="125" y="343" text-anchor="middle" font-weight="600" fill="#1e3a8a">The page changes</text>
+  </g>
+
+  <g stroke="#475569" stroke-width="2" fill="none">
+    <path d="M210 152 H256" marker-end="url(#a)"/>
+    <path d="M450 152 H496" marker-end="url(#a)"/>
+    <path d="M690 152 H756" marker-end="url(#a)"/>
+    <path d="M760 338 H694" marker-end="url(#a)"/>
+    <path d="M500 338 H454" marker-end="url(#a)"/>
+    <path d="M260 338 H214" marker-end="url(#a)"/>
+  </g>
+  <!-- guard redirect loop -->
+  <path d="M355 370 V420 H860 V374" stroke="#dc2626" stroke-width="2" fill="none" stroke-dasharray="7 5" marker-end="url(#r)"/>
+  <text x="600" y="442" text-anchor="middle" font-size="14" fill="#991b1b">guard redirects: Nav.replaceUrl, and the echo comes back once more</text>
+  <text x="595" y="226" text-anchor="middle" font-size="14" fill="#475569">one move = two updates</text>
+  <text x="595" y="246" text-anchor="middle" font-size="14" fill="#475569">(model and URL disagree in between)</text>
+</svg>
